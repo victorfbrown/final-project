@@ -58,8 +58,32 @@ piano.connect(reverb)
 const firstMeasure = ["E5", "B4", "G4", "E5", "B4", "G4", "E5", "B4"]
 const secondMeasure = ["D5", "B4", "F4", "D5", "B4", "F4", "D5", "B4"]
 const thirdMeasure = ["C5", "A4", "F4", "C5", "A4", "F4", "C5", "A4"]
+
+/*
+const images = document.getElementsByTagName('img');
+      while (images.length > 0) {
+        images[0].parentNode.removeChild(images[0]);
+}
+*/
+
+async function playAndDisplay(note, type, time) {
+  piano.triggerAttackRelease(note, type, time)
+  // NEED TO DO IT SYNCED UP
+  nn.create('div')
+    .content('⚫️')
+    .css({
+      position: 'absolute',
+      fontSize: 20,
+      cursor: 'pointer',
+      left: nn.random(100) + 10,
+      top: nn.random(100) + 5
+    })
+    .addTo('body')
+    .on('click', () => emoji.remove)
+}
   
-function playClocks(notes) {
+function playClocks(notes, emoji) {
+  emoji.remove()
   const now = Tone.now();
   const length = notes.length
   const eachIntroNote = 0.25
@@ -68,11 +92,10 @@ function playClocks(notes) {
     if (flatKeysTreble.includes(currNote[0])) {
       currNote = currNote[0] + "b" + currNote[1]
     }
-    piano.triggerAttackRelease(currNote, "8n", now + eachIntroNote * i)
+    playAndDisplay(currNote, "8n", now + eachIntroNote * i)
   }
   let offset = now + eachIntroNote * length
   let finalTime = playSecond(offset-0.4)
-  // finalTime = now-0.5
   playSecond(finalTime+0.5)
 }
   
@@ -104,6 +127,7 @@ let notes = firstMeasure.concat(secondMeasure, secondMeasure, thirdMeasure)
 let intro = notes.concat(notes)
 
 const fontSize = 90
+
 const emoji = nn.create('span')
     .content('⏰')
     .css({
@@ -114,7 +138,20 @@ const emoji = nn.create('span')
       top: nn.height/2 - fontSize/2
     })
     .addTo('body')
-    .on('click', () => playClocks(intro))
+    .on('click', () => playClocks(intro, emoji))
+
 
     
+// const emoji2 = nn.create('div')
+//     .content('⚫️')
+//     .css({
+//       class: 'aaa',
+//       position: 'absolute',
+//       fontSize: 100,
+//       cursor: 'pointer',
+//       left: 100,
+//       top: 100
+//     })
+//     .addTo('body')
+//     .on('click', () => emoji.remove)
 </script>
