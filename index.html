@@ -58,6 +58,34 @@ const firstMeasure = ["E5", "B4", "G4", "E5", "B4", "G4", "E5", "B4"]
 const secondMeasure = ["D5", "B4", "F4", "D5", "B4", "F4", "D5", "B4"]
 const thirdMeasure = ["C5", "A4", "F4", "C5", "A4", "F4", "C5", "A4"]
 
+const firstSet = new Set(firstMeasure)
+const secondSet = new Set(secondMeasure)
+const thirdSet = new Set(thirdMeasure)
+const allSet = new Set([...firstSet, ...secondSet, ...thirdSet])
+
+console.log(allSet)
+  
+//NEED E5, B4, G4, D5, F4, C5, A4
+
+const eachKeyWidth = nn.width / 32
+  
+
+function getNoteLocation(note) {
+  const isFlat = note.contains('b')
+  const first = note[0]
+  const last = note[-1]
+  // NEED TO FIND LEXICAL DIFFERENCE TO FIND DISTANCE FROM START
+  // NEED TO FIND OCTAVE DIFFERENCE TO FIND THE START LOCATION
+  
+  const diffFromA = 0
+  if (isFlat) {
+    return
+  } else {
+    return
+  }
+}
+  
+  
 function playAndDisplay(note, type, time) {
   piano.triggerAttackRelease(note, type, time)
   
@@ -66,15 +94,14 @@ function playAndDisplay(note, type, time) {
     images[0].parentNode.removeChild(images[0]);
   }
  
-  const fontsize = 20
   nn.create('div')
     .content('⚫️')
     .css({
       position: 'absolute',
-      fontSize: fontsize,
+      fontSize: nn.width/32,
       cursor: 'pointer',
       left: nn.random(nn.width),
-      top: nn.height / 2 + fontsize / 2 + 90
+      top: nn.height / 2 + (nn.width / 32) / 2 + 90
     })
     .addTo('body')
     .on('click', () => emoji.remove)
