@@ -4,12 +4,11 @@
 </body>
 <script>
 /* global nn, Tone*/
-  
+
 const synth = new Tone.Synth().toDestination()
 
 const flatKeysTreble = ["A", "B", "D", "E"]
 const flatKeysBass = ["A", "B", "D", "E"]
-
 
 const reverb = new Tone.Reverb({
   wet: 0.75,
@@ -59,16 +58,14 @@ const firstMeasure = ["E5", "B4", "G4", "E5", "B4", "G4", "E5", "B4"]
 const secondMeasure = ["D5", "B4", "F4", "D5", "B4", "F4", "D5", "B4"]
 const thirdMeasure = ["C5", "A4", "F4", "C5", "A4", "F4", "C5", "A4"]
 
-/*
-const images = document.getElementsByTagName('img');
+function playAndDisplay(note, type, time) {
+  piano.triggerAttackRelease(note, type, time)
+  
+  const images = document.getElementsByTagName('div');
       while (images.length > 0) {
         images[0].parentNode.removeChild(images[0]);
-}
-*/
-
-async function playAndDisplay(note, type, time) {
-  piano.triggerAttackRelease(note, type, time)
-  // NEED TO DO IT SYNCED UP
+  }
+ 
   nn.create('div')
     .content('⚫️')
     .css({
@@ -81,77 +78,75 @@ async function playAndDisplay(note, type, time) {
     .addTo('body')
     .on('click', () => emoji.remove)
 }
-  
+
 function playClocks(notes, emoji) {
   emoji.remove()
-  const now = Tone.now();
-  const length = notes.length
+  const now = Tone.now()
   const eachIntroNote = 0.25
+
+  // Schedule each note and dot
   for (let i = 0; i < notes.length; i++) {
     let currNote = notes[i]
     if (flatKeysTreble.includes(currNote[0])) {
       currNote = currNote[0] + "b" + currNote[1]
     }
-    playAndDisplay(currNote, "8n", now + eachIntroNote * i)
+    const time = now + eachIntroNote * i
+    Tone.Transport.schedule((t) => {
+      playAndDisplay(currNote, "8n", t)
+    }, time - now) // Time relative to Transport
   }
-  let offset = now + eachIntroNote * length
-  let finalTime = playSecond(offset-0.4)
-  playSecond(finalTime+0.5)
+
+  // Schedule second part of the melody
+  const offset = now + eachIntroNote * notes.length
+  const finalTime = playSecond(offset - 0.4)
+  playSecond(finalTime + 0.5)
+
+  // Start the transport
+  Tone.Transport.start("+0.1")
 }
-  
-  
+
 function playSecond(offset) {
-  piano.triggerAttackRelease("Eb5", "2n", offset + 0.5)
-  piano.triggerAttackRelease("Eb5", "2n", offset + 1)
-  piano.triggerAttackRelease("Eb5", "2n", offset + 1.5)
-  piano.triggerAttackRelease("Eb5", "8n", offset + 2)
-  piano.triggerAttackRelease("C5", "8n", offset + 2.25)
-  piano.triggerAttackRelease("Db5", "8n", offset + 2.5)
-  piano.triggerAttackRelease("C5", "4n", offset + 3)
-  piano.triggerAttackRelease("Bb4", "2n", offset + 3.25)
+  const schedule = (note, dur, t) => {
+    Tone.Transport.schedule((time) => {
+      // piano.triggerAttackRelease(note, dur, time)
+      playAndDisplay(note, dur, time)
+    }, t - Tone.now())
+  }
 
-  
-  piano.triggerAttackRelease("Db5", "4n", offset + 4.5)
-  piano.triggerAttackRelease("Db5", "4n", offset + 5)
-  piano.triggerAttackRelease("Db5", "4n", offset + 5.5)
-  piano.triggerAttackRelease("Db5", "8n", offset + 5.75)
-  piano.triggerAttackRelease("Bb4", "8n", offset + 6)
-  piano.triggerAttackRelease("C5", "8n", offset + 6.5)
-  piano.triggerAttackRelease("Bb4", "8n", offset + 6.75)
-  piano.triggerAttackRelease("Ab4", "2n", offset + 7.25)
-  return offset+7.5
+  schedule("Eb5", "2n", offset + 0.5)
+  schedule("Eb5", "2n", offset + 1)
+  schedule("Eb5", "2n", offset + 1.5)
+  schedule("Eb5", "8n", offset + 2)
+  schedule("C5", "8n", offset + 2.25)
+  schedule("Db5", "8n", offset + 2.5)
+  schedule("C5", "4n", offset + 3)
+  schedule("Bb4", "2n", offset + 3.25)
+
+  schedule("Db5", "4n", offset + 4.5)
+  schedule("Db5", "4n", offset + 5)
+  schedule("Db5", "4n", offset + 5.5)
+  schedule("Db5", "8n", offset + 5.75)
+  schedule("Bb4", "8n", offset + 6)
+  schedule("C5", "8n", offset + 6.5)
+  schedule("Bb4", "8n", offset + 6.75)
+  schedule("Ab4", "2n", offset + 7.25)
+
+  return offset + 7.5
 }
-  
-let notes = firstMeasure.concat(secondMeasure, secondMeasure, thirdMeasure)
 
+let notes = firstMeasure.concat(secondMeasure, secondMeasure, thirdMeasure)
 let intro = notes.concat(notes)
 
 const fontSize = 90
-
 const emoji = nn.create('span')
-    .content('⏰')
-    .css({
-      position: 'absolute',
-      fontSize: fontSize,
-      cursor: 'pointer',
-      left: nn.width/2 - fontSize/2,
-      top: nn.height/2 - fontSize/2
-    })
-    .addTo('body')
-    .on('click', () => playClocks(intro, emoji))
-
-
-    
-// const emoji2 = nn.create('div')
-//     .content('⚫️')
-//     .css({
-//       class: 'aaa',
-//       position: 'absolute',
-//       fontSize: 100,
-//       cursor: 'pointer',
-//       left: 100,
-//       top: 100
-//     })
-//     .addTo('body')
-//     .on('click', () => emoji.remove)
+  .content('⏰')
+  .css({
+    position: 'absolute',
+    fontSize: fontSize,
+    cursor: 'pointer',
+    left: nn.width / 2 - fontSize / 2,
+    top: nn.height / 2 - fontSize / 2
+  })
+  .addTo('body')
+  .on('click', () => playClocks(intro, emoji))
 </script>
