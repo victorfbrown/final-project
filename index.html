@@ -71,21 +71,28 @@ const eachKeyWidth = nn.width / 32
   
 
 function getNoteLocation(note) {
-  const isFlat = note.contains('b')
+  const isFlat = note.includes('b')
   const first = note[0]
-  const last = note[-1]
+  const last = parseInt(note[-1])
+  console.log(note)
   // NEED TO FIND LEXICAL DIFFERENCE TO FIND DISTANCE FROM START
   // NEED TO FIND OCTAVE DIFFERENCE TO FIND THE START LOCATION
   
-  const diffFromA = 0
+  const diffFromA = first.charCodeAt() - 'A'.charCodeAt()
+  const octaveDifference = last - 4
+  
+  const displacement = (octaveDifference * 7 + diffFromA) * nn.width/32 + nn.width/32 /2
+  // console.log(octaveDifference)
+  // console.log(diffFromA)
+  // console.log(displacement)
   if (isFlat) {
-    return
+    return 20
   } else {
-    return
+    return displacement
   }
 }
   
-  
+
 function playAndDisplay(note, type, time) {
   piano.triggerAttackRelease(note, type, time)
   
@@ -94,13 +101,14 @@ function playAndDisplay(note, type, time) {
     images[0].parentNode.removeChild(images[0]);
   }
  
+  // console.log(getNoteLocation(note))
   nn.create('div')
     .content('⚫️')
     .css({
       position: 'absolute',
       fontSize: nn.width/32,
       cursor: 'pointer',
-      left: nn.random(nn.width),
+      left: getNoteLocation(note),
       top: nn.height / 2 + (nn.width / 32) / 2 + 90
     })
     .addTo('body')
