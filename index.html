@@ -62,18 +62,19 @@ function playAndDisplay(note, type, time) {
   piano.triggerAttackRelease(note, type, time)
   
   const images = document.getElementsByTagName('div');
-      while (images.length > 0) {
-        images[0].parentNode.removeChild(images[0]);
+  while (images.length > 0) {
+    images[0].parentNode.removeChild(images[0]);
   }
  
+  const fontsize = 20
   nn.create('div')
     .content('⚫️')
     .css({
       position: 'absolute',
-      fontSize: 20,
+      fontSize: fontsize,
       cursor: 'pointer',
-      left: nn.random(100) + 10,
-      top: nn.random(100) + 5
+      left: nn.random(nn.width),
+      top: nn.height / 2 + fontsize / 2 + 90
     })
     .addTo('body')
     .on('click', () => emoji.remove)
@@ -81,6 +82,17 @@ function playAndDisplay(note, type, time) {
 
 function playClocks(notes, emoji) {
   emoji.remove()
+  const url = 'piano-clip-art.png'
+  nn.create('img')
+  .set({ src: `${url}`})
+  .css({
+    position: 'absolute',
+    width: nn.width,
+    height: nn.height / 2,
+    left: 0,
+    top: nn.height / 4
+  })
+  .addTo('body')
   const now = Tone.now()
   const eachIntroNote = 0.25
 
