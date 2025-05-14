@@ -63,7 +63,6 @@ const secondSet = new Set(secondMeasure)
 const thirdSet = new Set(thirdMeasure)
 const allSet = new Set([...firstSet, ...secondSet, ...thirdSet])
 
-const eachKeyWidth = nn.width / 32
   
 
 function getNoteLocation(note) {
@@ -78,7 +77,7 @@ function getNoteLocation(note) {
   const keyWidth = nn.width/21
   const displacement = (octaveDifference * 7 + diffFromA) * keyWidth
   const start = keyWidth * 6
-  let normalNote = start + displacement - 30
+  let normalNote = start + displacement - nn.width/21
   if (isFlat) {
     normalNote -= keyWidth/2
   }
@@ -99,10 +98,10 @@ function playAndDisplay(note, type, time) {
     .content('🔴')
     .css({
       position: 'absolute',
-      fontSize: nn.width/32,
+      fontSize: nn.width/21 * 0.7,
       cursor: 'pointer',
       left: getNoteLocation(note),
-      top: note.includes('b') ? normalHeight - 80 : normalHeight
+      top: note.includes('b') ? normalHeight - nn.width/21 * 2 : normalHeight
     })
     .addTo('body')
     .on('click', () => emoji.remove)
