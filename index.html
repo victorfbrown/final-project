@@ -70,7 +70,6 @@ function getNoteLocation(note) {
   const isFlat = note.includes('b')
   const first = note[0]
   const last = parseInt(note[note.length - 1])
-  console.log(nn.width)
   const diffFromA = first.charCodeAt() - 'A'.charCodeAt()
   let octaveDifference = last - 4
   if (diffFromA < 2) {
@@ -146,7 +145,6 @@ function playClocks(notes, emoji) {
 function playSecond(offset) {
   const schedule = (note, dur, t) => {
     Tone.Transport.schedule((time) => {
-      // piano.triggerAttackRelease(note, dur, time)
       playAndDisplay(note, dur, time)
     }, t - Tone.now())
   }
