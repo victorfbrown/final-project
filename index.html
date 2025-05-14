@@ -62,8 +62,6 @@ const firstSet = new Set(firstMeasure)
 const secondSet = new Set(secondMeasure)
 const thirdSet = new Set(thirdMeasure)
 const allSet = new Set([...firstSet, ...secondSet, ...thirdSet])
-
-console.log(allSet)
   
 //NEED E5, B4, G4, D5, F4, C5, A4
 
@@ -73,20 +71,19 @@ const eachKeyWidth = nn.width / 32
 function getNoteLocation(note) {
   const isFlat = note.includes('b')
   const first = note[0]
-  const last = parseInt(note[-1])
-  console.log(note)
+  const last = parseInt(note[note.length - 1])
   // NEED TO FIND LEXICAL DIFFERENCE TO FIND DISTANCE FROM START
   // NEED TO FIND OCTAVE DIFFERENCE TO FIND THE START LOCATION
   
-  const diffFromA = first.charCodeAt() - 'A'.charCodeAt()
+  const diffFromC = first.charCodeAt() - 'A'.charCodeAt() + 2
   const octaveDifference = last - 4
-  
-  const displacement = (octaveDifference * 7 + diffFromA) * nn.width/32 + nn.width/32 /2
-  // console.log(octaveDifference)
-  // console.log(diffFromA)
-  // console.log(displacement)
+  const keyWidth = nn.width/32
+  const displacement = (octaveDifference * 7 + diffFromC) * keyWidth + keyWidth /2
+  console.log(octaveDifference)
+  console.log(diffFromC)
+  console.log(displacement)
   if (isFlat) {
-    return 20
+    return displacement - keyWidth
   } else {
     return displacement
   }
