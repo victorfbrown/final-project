@@ -79,7 +79,7 @@ function getNoteLocation(note) {
   const start = keyWidth * 6
   let normalNote = start + displacement - nn.width/21
   if (isFlat) {
-    normalNote -= keyWidth/2
+    normalNote -= keyWidth/2 * 0.8
   }
   return normalNote
 }
