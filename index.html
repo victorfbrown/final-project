@@ -62,8 +62,6 @@ const firstSet = new Set(firstMeasure)
 const secondSet = new Set(secondMeasure)
 const thirdSet = new Set(thirdMeasure)
 const allSet = new Set([...firstSet, ...secondSet, ...thirdSet])
-  
-//NEED E5, B4, G4, D5, F4, C5, A4
 
 const eachKeyWidth = nn.width / 32
   
@@ -72,21 +70,20 @@ function getNoteLocation(note) {
   const isFlat = note.includes('b')
   const first = note[0]
   const last = parseInt(note[note.length - 1])
-  // NEED TO FIND LEXICAL DIFFERENCE TO FIND DISTANCE FROM START
-  // NEED TO FIND OCTAVE DIFFERENCE TO FIND THE START LOCATION
-  
-  const diffFromC = first.charCodeAt() - 'A'.charCodeAt() + 2
-  const octaveDifference = last - 4
-  const keyWidth = nn.width/32
-  const displacement = (octaveDifference * 7 + diffFromC) * keyWidth + keyWidth /2
-  console.log(octaveDifference)
-  console.log(diffFromC)
-  console.log(displacement)
-  if (isFlat) {
-    return displacement - keyWidth
-  } else {
-    return displacement
+  console.log(nn.width)
+  const diffFromA = first.charCodeAt() - 'A'.charCodeAt()
+  let octaveDifference = last - 4
+  if (diffFromA < 2) {
+    octaveDifference += 1
   }
+  const keyWidth = nn.width/21
+  const displacement = (octaveDifference * 7 + diffFromA) * keyWidth
+  const start = keyWidth * 6
+  let normalNote = start + displacement - 30
+  if (isFlat) {
+    normalNote -= keyWidth/2
+  }
+  return normalNote
 }
   
 
@@ -98,15 +95,15 @@ function playAndDisplay(note, type, time) {
     images[0].parentNode.removeChild(images[0]);
   }
  
-  // console.log(getNoteLocation(note))
+  const normalHeight = nn.height / 2 + (nn.width / 32) / 2 + 90
   nn.create('div')
-    .content('⚫️')
+    .content('🔴')
     .css({
       position: 'absolute',
       fontSize: nn.width/32,
       cursor: 'pointer',
       left: getNoteLocation(note),
-      top: nn.height / 2 + (nn.width / 32) / 2 + 90
+      top: note.includes('b') ? normalHeight - 80 : normalHeight
     })
     .addTo('body')
     .on('click', () => emoji.remove)
@@ -128,7 +125,6 @@ function playClocks(notes, emoji) {
   const now = Tone.now()
   const eachIntroNote = 0.25
 
-  // Schedule each note and dot
   for (let i = 0; i < notes.length; i++) {
     let currNote = notes[i]
     if (flatKeysTreble.includes(currNote[0])) {
@@ -137,15 +133,13 @@ function playClocks(notes, emoji) {
     const time = now + eachIntroNote * i
     Tone.Transport.schedule((t) => {
       playAndDisplay(currNote, "8n", t)
-    }, time - now) // Time relative to Transport
+    }, time - now)
   }
 
-  // Schedule second part of the melody
   const offset = now + eachIntroNote * notes.length
   const finalTime = playSecond(offset - 0.4)
   playSecond(finalTime + 0.5)
 
-  // Start the transport
   Tone.Transport.start("+0.1")
 }
 
