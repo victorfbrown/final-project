@@ -87,7 +87,6 @@ function getNoteLocation(note) {
 
 function playAndDisplay(note, type, time) {
   piano.triggerAttackRelease(note, type, time)
-  
   const images = document.getElementsByTagName('div');
   while (images.length > 0) {
     images[0].parentNode.removeChild(images[0]);
@@ -129,9 +128,30 @@ function playClocks(notes, emoji) {
       currNote = currNote[0] + "b" + currNote[1]
     }
     const time = now + eachIntroNote * i
-    Tone.Transport.schedule((t) => {
-      playAndDisplay(currNote, "8n", t)
-    }, time - now)
+    schedule(currNote, "8n", time)
+    const currMeasure = i/8
+      if (currMeasure < 8) {
+        if (i%8 === 0) {
+          if (currMeasure %4 === 0) {
+          schedule(['Eb5', 'G4', 'Bb4'], "1n", time)
+          } else if ([1,2].includes(currMeasure %4)) {
+            schedule(['Db5', 'F4', 'Bb4'], "1n", time)
+          } else if (currMeasure %4 === 3) {
+            schedule(['Ab4', 'F4', 'C5'], "1n", time)
+          }
+        }
+      } else {
+        if ((i >= 64 && i < 72) || (i >= 64+32 && i < 72+32)) {
+        schedule(['Eb4'], "4n", time)
+        console.log('m1')
+        } else if ((i >= 72 && i < 88) || (i >= 72+32 && i < 88+32)) {
+          schedule(['Bb4'], "4n", time)
+          console.log('m2-m3')
+        } else if ((i >= 88 && i < 96) || (i >= 88+32 && i < 96+32)) {
+          schedule(['F4'], "4n", time)
+          console.log('m4')
+        }
+      }
   }
 
   const offset = now + eachIntroNote * notes.length
@@ -141,13 +161,18 @@ function playClocks(notes, emoji) {
   Tone.Transport.start("+0.1")
 }
 
-function playSecond(offset) {
-  const schedule = (note, dur, t) => {
-    Tone.Transport.schedule((time) => {
-      playAndDisplay(note, dur, time)
-    }, t - Tone.now())
-  }
+const schedule = (notes, dur, t) => {
+  Tone.Transport.schedule((time) => {
+    if (Array.isArray(notes)) {
+      piano.triggerAttackRelease(notes, dur, time)
+      // notes.forEach(note => playAndDisplay(note, dur, time))
+    } else {
+      playAndDisplay(notes, dur, time)
+    }
+  }, t - Tone.now())
+}  
 
+function playSecond(offset) {
   schedule("Eb5", "2n", offset + 0.5)
   schedule("Eb5", "2n", offset + 1)
   schedule("Eb5", "2n", offset + 1.5)
@@ -170,6 +195,7 @@ function playSecond(offset) {
 }
 
 let notes = firstMeasure.concat(secondMeasure, secondMeasure, thirdMeasure)
+notes = notes.concat(notes)
 let intro = notes.concat(notes)
 
 const fontSize = 90
