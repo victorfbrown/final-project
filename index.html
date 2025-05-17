@@ -107,6 +107,7 @@ function playAndDisplay(note, type, time) {
 }
 
 function playClocks(notes, emoji) {
+  // piano.triggerAttackRelease("F4", "4n", Tone.now())
   emoji.remove()
   const url = 'piano-clip-art.png'
   nn.create('img')
@@ -142,14 +143,13 @@ function playClocks(notes, emoji) {
         }
       } else {
         if ((i >= 64 && i < 72) || (i >= 64+32 && i < 72+32)) {
-        schedule(['Eb4'], "4n", time)
-        console.log('m1')
+        schedule('Eb4', "4n", time)
         } else if ((i >= 72 && i < 88) || (i >= 72+32 && i < 88+32)) {
-          schedule(['Bb4'], "4n", time)
-          console.log('m2-m3')
+          schedule('Bb4', "4n", time)
+          schedule('Bb4', "4n", time+0.25)
         } else if ((i >= 88 && i < 96) || (i >= 88+32 && i < 96+32)) {
-          schedule(['F4'], "4n", time)
-          console.log('m4')
+          schedule('F4', "4n", time)
+          schedule('F4', "4n", time+0.25)
         }
       }
   }
@@ -210,4 +210,6 @@ const emoji = nn.create('span')
   })
   .addTo('body')
   .on('click', () => playClocks(intro, emoji))
+
+
 </script>
