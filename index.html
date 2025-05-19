@@ -107,7 +107,6 @@ function playAndDisplay(note, type, time) {
 }
 
 function playClocks(notes, emoji) {
-  // piano.triggerAttackRelease("F4", "4n", Tone.now())
   emoji.remove()
   const url = 'piano-clip-art.png'
   nn.create('img')
@@ -129,29 +128,29 @@ function playClocks(notes, emoji) {
       currNote = currNote[0] + "b" + currNote[1]
     }
     const time = now + eachIntroNote * i
-    schedule(currNote, "8n", time)
     const currMeasure = i/8
-      if (currMeasure < 8) {
-        if (i%8 === 0) {
-          if (currMeasure %4 === 0) {
+    if (currMeasure < 8) {
+      if (i%8 === 0) {
+        console.log(i, currMeasure)
+        if (currMeasure %4 === 0) {
           schedule(['Eb5', 'G4', 'Bb4'], "1n", time)
-          } else if ([1,2].includes(currMeasure %4)) {
-            schedule(['Db5', 'F4', 'Bb4'], "1n", time)
-          } else if (currMeasure %4 === 3) {
-            schedule(['Ab4', 'F4', 'C5'], "1n", time)
-          }
-        }
-      } else {
-        if ((i >= 64 && i < 72) || (i >= 64+32 && i < 72+32)) {
-        schedule(['Eb4'], "4n", time)
-        } else if ((i >= 72 && i < 88) || (i >= 72+32 && i < 88+32)) {
-          schedule(['Bb4'], "4n", time)
-          schedule(['Bb4'], "4n", time+0.25)
-        } else if ((i >= 88 && i < 96) || (i >= 88+32 && i < 96+32)) {
-          schedule(['F4'], "4n", time)
-          schedule(['F4'], "4n", time+0.25)
+        } else if ([1,2].includes(currMeasure %4)) {
+          schedule(['Db5', 'F4', 'Bb4'], "1n", time)
+        } else if (currMeasure %4 === 3) {
+          schedule(['Ab4', 'F4', 'C5'], "1n", time)
         }
       }
+    } else {
+      console.log('playing', i, currMeasure)
+      if ((i >= 64 && i < 72) || (i >= 64+32 && i < 72+32)) {
+      schedule(['Eb4'], "4n", time)
+      } else if ((i >= 72 && i < 88) || (i >= 72+32 && i < 88+32)) {
+        schedule(['Bb4'], "4n", time)
+      } else if ((i >= 88 && i < 96) || (i >= 88+32 && i < 96+32)) {
+        schedule(['F4'], "4n", time)
+      }
+    }
+    if (currNote !== "F4") {schedule(currNote, "8n", time)}
   }
 
   const offset = now + eachIntroNote * notes.length
@@ -165,7 +164,7 @@ const schedule = (notes, dur, t) => {
   Tone.Transport.schedule((time) => {
     if (Array.isArray(notes)) {
       const oldVolume = piano.volume
-      piano.triggerAttackRelease(notes, dur, time, 0.25)
+      piano.triggerAttackRelease(notes, dur, time)
     } else {
       playAndDisplay(notes, dur, time)
     }
