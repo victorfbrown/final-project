@@ -93,14 +93,18 @@ function playAndDisplay(note, type, time) {
   }
  
   const normalHeight = nn.height / 2 + (nn.width / 32) / 2 + 90
+  const isFlat = note.includes('b')
+  const symbol = isFlat ?  '🟣' : '⚫️' 
+  const color = isFlat ? 'white' : 'black'
   nn.create('div')
-    .content('🔴')
+    .content(symbol)
     .css({
       position: 'absolute',
+      color: color,
       fontSize: nn.width/21 * 0.7,
       cursor: 'pointer',
       left: getNoteLocation(note),
-      top: note.includes('b') ? normalHeight - nn.width/21 * 2 : normalHeight
+      top: isFlat ? normalHeight - nn.width/21 * 2 : normalHeight
     })
     .addTo('body')
     .on('click', () => emoji.remove)
@@ -150,7 +154,7 @@ function playClocks(notes, emoji) {
         schedule(['F4'], "4n", time)
       }
     }
-    if (currNote !== "F4") {schedule(currNote, "8n", time)}
+    schedule(currNote, "8n", time)
   }
 
   const offset = now + eachIntroNote * notes.length
